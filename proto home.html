@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Budget Planner</title>
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        
+        header {
+            background-color: hwb(126 6% 21%);
+            color: white;
+            text-align: center;
+            padding: 1rem 0;
+        }
+        
+        main {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 1rem;
+            background-color: white;
+            box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 6px;
+        }
+        
+        .intro h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        
+        .intro p {
+            margin-bottom: 20px;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: hwb(126 6% 21%);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .btn:hover {
+            background-color:hwb(126 3% 41%);
+        }
+        
+        .input-form h2 {
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+        
+        #budget-form label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        #budget-form input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        
+        #expense-list .expense-item {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        #add-expense {
+            display: block;
+            background-color: #555;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        
+        .data-display h2 {
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid #ccc;
+        }
+        
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ccc;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 1rem 0;
+            color: #666;
+        }
+        
+        footer a {
+            color: hwb(126 6% 21%);
+            text-decoration: none;
+        }
+        
+        footer a:hover {
+            text-decoration: underline;
+        }
+@media screen and (max-width: 768px) {
+    main {
+        padding: 1rem;
+    }
+
+    .btn {
+        display: block;
+        width: 100%;
+    }
+
+    #budget-form input {
+        margin-bottom: 10px;
+    }
+
+    #expense-list .expense-item {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    #add-expense {
+        margin-top: 10px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    #budget-form label,
+    #expense-list .expense-item input {
+        font-size: 14px;
+    }
+    
+    #add-expense {
+        padding: 5px 8px;
+    }
+
+    table {
+        font-size: 14px;
+    }
+}
+
+
+        </style>
+</head>
+<body>
+    <header>
+        <h1>BUDGET PLANNER</h1>
+    </header>
+    <main>
+        <section class="intro">
+            <h2>Welcome to the Budget Planner!</h2>
+            <p>Take control of your finances and reach your goals.</p>
+            <a href="newlogin.html"><button class="btn">Sign In</button></a>
+            <a href="login.html"><button class="btn">Sign Up</button></a>
+        </section>
+        
+        <section class="input-form">
+            <h2>Enter Financial Data:</h2>
+            <form id="budget-form">
+                <label for="income">Monthly Income:</label>
+                <input type="number" id="income" name="income" placeholder="Enter your monthly income">
+                
+                <label for="total-expense">Total Monthly Expenses:</label>
+                <input type="number" id="total-expense" name="totalExpense" placeholder="Enter your total monthly expenses">
+                
+                <fieldset>
+                    <legend>Enter Individual Expenses:</legend>
+                    <div id="expense-list">
+                        <div class="expense-item">
+                            <input type="text" name="expenseType[]" placeholder="Expense type">
+                            <input type="number" name="expenseAmount[]" placeholder="Expense amount">
+                        </div>
+                    </div>
+                    <button type="button" id="add-expense">Add Expense</button>
+                </fieldset>
+                
+                <button class="btn" type="submit">Submit</button>
+            </form>
+        </section>
+        
+        <section class="data-display">
+            <h2>Entered Financial Data:</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Expense Type</th>
+                        <th>Expense Amount</th>
+                    </tr>
+                </thead>
+                <tbody id="data-table-body">
+                </tbody>
+            </table>
+        </section>
+    </main>
+    <footer>
+        <p>Stay on top of your finances with the Budget Planner.</p>
+        <a href="#">Learn More</a> | <a href="#">FAQ</a> | <a href="#">Contact Us</a>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('budget-form');
+            const addExpenseButton = document.getElementById('add-expense');
+            const expenseList = document.getElementById('expense-list');
+            const dataTableBody = document.getElementById('data-table-body');
+            
+            addExpenseButton.addEventListener('click', function () {
+                const expenseItem = document.createElement('div');
+                expenseItem.classList.add('expense-item');
+                expenseItem.innerHTML = `
+                    <input type="text" name="expenseType[]" placeholder="Expense type">
+                    <input type="number" name="expenseAmount[]" placeholder="Expense amount">
+                `;
+                expenseList.appendChild(expenseItem);
+            });
+            
+            form.addEventListener('submit', function (event) {
+                event.preventDefault();
+                
+                const formData = new FormData(form);
+                
+                const data = {
+                    income: parseFloat(formData.get('income')) || 0,
+                    totalExpense: parseFloat(formData.get('totalExpense')) || 0,
+                    expenses: []
+                };
+                
+                const expenseTypes = formData.getAll('expenseType[]');
+                const expenseAmounts = formData.getAll('expenseAmount[]');
+                
+                for (let i = 0; i < expenseTypes.length; i++) {
+                    data.expenses.push({
+                        type: expenseTypes[i],
+                        amount: parseFloat(expenseAmounts[i]) || 0
+                    });
+                }
+                dataTableBody.innerHTML = '';
+                for (const expense of data.expenses) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${expense.type}</td>
+                        <td>$${expense.amount.toFixed(2)}</td>
+                    `;
+                    dataTableBody.appendChild(row);
+                }
+                form.reset();
+                expenseList.innerHTML = `
+                    <div class="expense-item">
+                        <input type="text" name="expenseType[]" placeholder="Expense type">
+                        <input type="number" name="expenseAmount[]" placeholder="Expense amount">
+                    </div>
+                `;
+            });
+        });
+    </script>
+</body>
+</html>
